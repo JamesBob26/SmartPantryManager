@@ -198,4 +198,68 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.insert(TABLE_RECIPE_INGREDIENTS, null, values);
     }
 
+    // Pantry CRUD Operations
+
+    // 1. Create
+    public long insertPantryItem(PantryItem item) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        android.content.ContentValues values = new android.content.ContentValues();
+        values.put(COLUMN_PANTRY_NAME, item.getName());
+        values.put(COLUMN_PANTRY_QTY, item.getQuantity());
+        values.put(COLUMN_PANTRY_UNIT, item.getUnit());
+        values.put(COLUMN_PANTRY_EXPIRY, item.getExpiryDate());
+
+        long id = db.insert(TABLE_PANTRY, null, values);
+        db.close();
+        return id;
+    }
+
+    // 2. Read (Get all items for the RecyclerView list)
+    public java.util.List<PantryItem> getAllPantryItems() {
+        java.util.List<PantryItem> pantryList = new java.util.ArrayList<>();
+        String selectQuery = "SELECT * FROM " + TABLE_PANTRY;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        android.database.Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                PantryItem item = new PantryItem();
+                item.setId(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_PANTRY_ID)));
+                item.setName(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PANTRY_NAME)));
+                item.setQuantity(cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_PANTRY_QTY)));
+                item.setUnit(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PANTRY_UNIT)));
+                item.setExpiryDate(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PANTRY_EXPIRY)));
+
+                pantryList.add(item);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return pantryList;
+    }
+
+    // 3. Update
+    public int updatePantryItem(PantryItem item) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        android.content.ContentValues values = new android.content.ContentValues();
+        values.put(COLUMN_PANTRY_NAME, item.getName());
+        values.put(COLUMN_PANTRY_QTY, item.getQuantity());
+        values.put(COLUMN_PANTRY_UNIT, item.getUnit());
+        values.put(COLUMN_PANTRY_EXPIRY, item.getExpiryDate());
+
+        // updating row
+        int rowsAffected = db.update(TABLE_PANTRY, values, COLUMN_PANTRY_ID + " = ?",
+                new String[]{String.valueOf(item.getId())});
+        db.close();
+        return rowsAffected;
+    }
+
+    // 4. Delete
+    public void deletePantryItem(PantryItem item) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_PANTRY, COLUMN_PANTRY_ID + " = ?",
+                new String[]{String.valueOf(item.getId())});
+        db.close();
+    }
 }
