@@ -3,6 +3,10 @@ package com.robertklisiewicz.smartpantrymanager;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.Cursor;
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -261,5 +265,47 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.delete(TABLE_PANTRY, COLUMN_PANTRY_ID + " = ?",
                 new String[]{String.valueOf(item.getId())});
         db.close();
+    }
+
+    public List<Recipe> getAllRecipes() {
+        List<Recipe> recipeList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        // 1. Get all recipes
+        String recipeQuery = "SELECT * FROM Recipes";
+        Cursor recipeCursor = db.rawQuery(recipeQuery, null);
+
+        if (recipeCursor.moveToFirst()) {
+            do {
+                int recipeId = recipeCursor.getInt(recipeCursor.getColumnIndexOrThrow("id"));
+                String recipeName = recipeCursor.getString(recipeCursor.getColumnIndexOrThrow("name"));
+                String instructions = recipeCursor.getString(recipeCursor.getColumnIndexOrThrow("instructions"));
+
+                Recipe recipe = new Recipe(recipeId, recipeName, instructions);
+
+                // 2. Get all ingredients for this specific recipe
+                String ingredientQuery = "SELECT * FROM Recipe_Ingredients WHERE recipe_id = ?";
+                Cursor ingredientCursor = db.rawQuery(ingredientQuery, new String[]{String.valueOf(recipeId)});
+
+                if (ingredientCursor.moveToFirst()) {
+                    do {
+                        String ingName = ingredientCursor.getString(ingredientCursor.getColumnIndexOrThrow("ingredient_name"));
+                        double quantity = ingredientCursor.getDouble(ingredientCursor.getColumnIndexOrThrow("quantity"));
+                        String unit = ingredientCursor.getString(ingredientCursor.getColumnIndexOrThrow("unit"));
+
+                        // Add the ingredient to the recipe object
+                        recipe.addIngredient(new RecipeIngredient(ingName, quantity, unit));
+                    } while (ingredientCursor.moveToNext());
+                }
+                ingredientCursor.close();
+
+                // Add the fully populated recipe to the main list
+                recipeList.add(recipe);
+
+            } while (recipeCursor.moveToNext());
+        }
+        recipeCursor.close();
+
+        return recipeList;
     }
 }
