@@ -278,8 +278,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (recipeCursor.moveToFirst()) {
             do {
                 int recipeId = recipeCursor.getInt(recipeCursor.getColumnIndexOrThrow("id"));
-                String recipeName = recipeCursor.getString(recipeCursor.getColumnIndexOrThrow("name"));
-                String instructions = recipeCursor.getString(recipeCursor.getColumnIndexOrThrow("instructions"));
+                String recipeName = recipeCursor.getString(recipeCursor.getColumnIndexOrThrow("recipe_name"));
+                String instructions = recipeCursor.getString(recipeCursor.getColumnIndexOrThrow("preparation_steps"));
+
 
                 Recipe recipe = new Recipe(recipeId, recipeName, instructions);
 
@@ -290,7 +291,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 if (ingredientCursor.moveToFirst()) {
                     do {
                         String ingName = ingredientCursor.getString(ingredientCursor.getColumnIndexOrThrow("ingredient_name"));
-                        double quantity = ingredientCursor.getDouble(ingredientCursor.getColumnIndexOrThrow("quantity"));
+                        double quantity = ingredientCursor.getDouble(ingredientCursor.getColumnIndexOrThrow("required_quantity"));
                         String unit = ingredientCursor.getString(ingredientCursor.getColumnIndexOrThrow("unit"));
 
                         // Add the ingredient to the recipe object

@@ -3,6 +3,7 @@ package com.robertklisiewicz.smartpantrymanager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -19,6 +20,8 @@ public class MainActivity extends AppCompatActivity {
     private List<PantryItem> pantryList;
     private TextView tvEmptyPantry;
     private FloatingActionButton fabAddIngredient;
+    private Button btnFindRecipes;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerViewPantry = findViewById(R.id.recyclerViewPantry);
         tvEmptyPantry = findViewById(R.id.tvEmptyPantry);
         fabAddIngredient = findViewById(R.id.fabAddIngredient);
+        btnFindRecipes = findViewById(R.id.btnFindRecipes);
 
         // Setup RecyclerView
         recyclerViewPantry.setLayoutManager(new LinearLayoutManager(this));
@@ -42,6 +46,13 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, AddEditIngredientActivity.class);
             startActivity(intent);
         });
+
+        // Open the available recipes screen when the button is clicked
+        btnFindRecipes.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, AvailableRecipesActivity.class);
+            startActivity(intent);
+        });
+
     }
 
     @Override
