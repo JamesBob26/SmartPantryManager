@@ -38,7 +38,19 @@ public class PantryAdapter extends RecyclerView.Adapter<PantryAdapter.PantryView
         } else {
             holder.tvExpiryDate.setVisibility(View.GONE);
         }
+
+        // Make the entire row clickable to open the edit screen
+        holder.itemView.setOnClickListener(v -> {
+            android.content.Intent intent = new android.content.Intent(v.getContext(), AddEditIngredientActivity.class);
+            intent.putExtra("ITEM_ID", item.getId());
+            intent.putExtra("ITEM_NAME", item.getName());
+            intent.putExtra("ITEM_QUANTITY", item.getQuantity());
+            intent.putExtra("ITEM_UNIT", item.getUnit());
+            intent.putExtra("ITEM_EXPIRY", item.getExpiryDate());
+            v.getContext().startActivity(intent);
+        });
     }
+
 
     @Override
     public int getItemCount() {
