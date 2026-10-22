@@ -29,6 +29,15 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
         Recipe recipe = recipeList.get(position);
         holder.tvRecipeName.setText(recipe.getName());
         holder.tvRecipeInstructions.setText(recipe.getInstructions());
+
+        // Make the recipe row clickable to show a pop-up dialog with full instructions
+        holder.itemView.setOnClickListener(v -> {
+            new android.app.AlertDialog.Builder(v.getContext())
+                    .setTitle(recipe.getName())
+                    .setMessage(recipe.getInstructions())
+                    .setPositiveButton("Close", null)
+                    .show();
+        });
     }
 
     @Override

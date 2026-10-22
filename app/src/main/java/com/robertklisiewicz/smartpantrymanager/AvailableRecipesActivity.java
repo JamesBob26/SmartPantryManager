@@ -20,6 +20,11 @@ public class AvailableRecipesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_available_recipes);
 
+        // Show the back button in the top action bar
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+
         // Initialize Views
         recyclerViewRecipes = findViewById(R.id.recyclerViewRecipes);
         tvNoRecipes = findViewById(R.id.tvNoRecipes);
